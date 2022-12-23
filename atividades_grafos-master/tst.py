@@ -1,33 +1,50 @@
 import bibgrafo
 from meu_grafo_matriz_adj_dir import *
+from meu_grafo_lista_adj import *
 
 
 
-p_t = MeuGrafo()
-p_t.adiciona_vertice('A')
-p_t.adiciona_vertice('B')
-p_t.adiciona_vertice('C')
-p_t.adiciona_vertice('D')
-p_t.adiciona_vertice('E')
-p_t.adiciona_vertice('F')
-p_t.adiciona_aresta('a1', 'A', 'B',2)
-p_t.adiciona_aresta('a2', 'A', 'C',1)
-p_t.adiciona_aresta('a3', 'C', 'D',3)
-p_t.adiciona_aresta('a4', 'B', 'D',1)
-p_t.adiciona_aresta('a5', 'C', 'F',15)
-p_t.adiciona_aresta('a6', 'D', 'E',2)
-p_t.adiciona_aresta('a7', 'E', 'F',3)
-p_t.dijkstra('A','F')
+p_t3 = MeuGrafo()
+p_t3.adiciona_vertice('A')
+p_t3.adiciona_vertice('B')
+p_t3.adiciona_vertice('C')
+p_t3.adiciona_vertice('D')
+p_t3.adiciona_vertice('E')
+p_t3.adiciona_vertice('F')
+p_t3.adiciona_vertice('G')
+p_t3.adiciona_vertice('H')
+p_t3.adiciona_vertice('I')
+p_t3.adiciona_vertice('J')
+p_t3.adiciona_aresta('a1', 'A', 'B', 2)
+p_t3.adiciona_aresta('a2', 'C', 'D', 3)
+p_t3.adiciona_aresta('a3', 'B', 'D', 4)
+p_t3.adiciona_aresta('a4', 'C', 'F', 15)
+p_t3.adiciona_aresta('a10', 'F', 'G', 8)
+p_t3.adiciona_aresta('a11', 'G', 'E', 9)
+p_t3.adiciona_aresta('a12', 'E', 'H', 10)
+p_t3.adiciona_aresta('a13', 'H', 'I', 11)
+p_t3.adiciona_aresta('a14', 'I', 'J', 12)
+p_t3.adiciona_aresta('a15', 'J', 'G', 13)
 
-from math import gcd
+print(p_t3.Kruskall())
 
-
-def mmc(numeros):
-    m = 1
-    for n in numeros:
-        m = m * n // gcd(m, n)
-        print(m)
-    return m
-
-numeros = range(1, 8)
-mmc(numeros)
+'''self.grafkrk3 = MeuGrafo()
+self.grafkrk3.adiciona_vertice('A')
+self.grafkrk3.adiciona_vertice('B')
+self.grafkrk3.adiciona_vertice('C')
+self.grafkrk3.adiciona_vertice('D')
+self.grafkrk3.adiciona_vertice('E')
+self.grafkrk3.adiciona_vertice('F')
+self.grafkrk3.adiciona_vertice('G')
+self.grafkrk3.adiciona_vertice('H')
+self.grafkrk3.adiciona_vertice('I')
+self.grafkrk3.adiciona_vertice('J')
+self.grafkrk3.adiciona_aresta('a1', 'A', 'B', 2)
+self.grafkrk3.adiciona_aresta('a2', 'C', 'D', 3)
+self.grafkrk3.adiciona_aresta('a3', 'B', 'D', 4)
+self.grafkrk3.adiciona_aresta('a10', 'F', 'G', 8)
+self.grafkrk3.adiciona_aresta('a11', 'G', 'E', 9)
+self.grafkrk3.adiciona_aresta('a12', 'E', 'H', 10)
+self.grafkrk3.adiciona_aresta('a13', 'H', 'I', 11)
+self.grafkrk3.adiciona_aresta('a14', 'I', 'J', 12)
+self.grafkrk3.adiciona_aresta('a4', 'C', 'F', 15)'''

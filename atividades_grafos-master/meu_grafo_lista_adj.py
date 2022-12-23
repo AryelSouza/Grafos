@@ -1,25 +1,31 @@
 from re import T
 
 from bibgrafo.grafo_errors import VerticeInvalidoError
+
 from bibgrafo.grafo_lista_adjacencia import GrafoListaAdjacencia
-from bibgrafo.grafo_exceptions import *
-from copy import deepcopy
-import sys,io
-from itertools import combinations, permutations
-import math
-from bibgrafo.grafo_lista_adjacencia import GrafoListaAdjacencia
-from bibgrafo.grafo_exceptions import *
-from collections import deque
-import heapq
-from copy import deepcopy
+
 from math import inf
 
 class MeuGrafo(GrafoListaAdjacencia):
 
 
+    def adjacentes(self, V):
+        adj = []
+        for a in self.arestas:
+            # Check if the first vertex of the edge is the given vertex
+            if a.v1 == V:
+                adj.append((a.v2, a.peso))
+            # Check if the second vertex of the edge is the given vertex and the graph is undirected
+            elif a.v2 == V and not self.direcionado:
+                adj.append((a.v1, a.peso))
+        return adj
 
-
-
+    def direcionado(self):
+        '''
+        Verifica se o grafo é direcionado.
+        :return: Um valor booleano que indica se o grafo é direcionado
+        '''
+        return self.direcionado
 
 
 
@@ -118,7 +124,7 @@ class MeuGrafo(GrafoListaAdjacencia):
                 return False
         return True
 
-    '''def dfs(self, V=' '):
+    def dfs(self, V=' '):
 
         arv_dfs = MeuGrafo()
         arv_dfs.adiciona_vertice(V)
@@ -152,47 +158,8 @@ class MeuGrafo(GrafoListaAdjacencia):
                     arv_dfs = self.dfs_aux_rec(r, arv_dfs)
 
         return arv_dfs
-'''
-
-    def __dfs_recursivo(self, V, arvoreDfs, verticesVisitados, verticesAdjacentes):
-        '''
-        Responsável por percorrer o grafo de modo recursivo
-        :param V: O vértice atual
-        :param dfs: Grafo que será construido pela DFS
-        :param verticesVisitados: Conjunto responsável por armazenar os
-        vértices já visitados durante a busca
-        :param verticesAdjacentes: Lista de Adjacência do grafo
-        '''
-        verticesVisitados.add(V)
-
-        for (verticeAdjacente, rotuloAresta) in verticesAdjacentes[V]:
-
-            if verticeAdjacente not in verticesVisitados:
-                if not arvoreDfs.existeVertice(verticeAdjacente):
-                    arvoreDfs.adicionaVertice(verticeAdjacente)
-                arvoreDfs.adicionaAresta(rotuloAresta, V, verticeAdjacente)
-
-                self.__dfs_recursivo(verticeAdjacente, arvoreDfs, verticesVisitados, verticesAdjacentes)
-
-    def dfs(self, V=''):
-        '''
-        Provê um grafo gerado pela DFS partindo do vértice passado como parâmetro.
-        :param V: O vértice de partida
-        :return: Um objeto do tipo MeuGrafo com o grafo gerado
-        :raises: VerticeInvalidoException se o vértice não existe no grafo
-        '''
 
 
-        verticesAdjacentes = self.__gerarVerticesAdjacencentes()
-
-        arvoreDfs = MeuGrafo([V])
-        verticesVisitados = set()
-
-        if V not in verticesAdjacentes: return arvoreDfs
-
-        self.__dfs_recursivo(V, arvoreDfs, verticesVisitados, verticesAdjacentes)
-
-        return arvoreDfs
 
     def __gerar_caminho_ciclo(self, verticeInicial, v, pai, ciclo):
         '''
@@ -238,7 +205,7 @@ class MeuGrafo(GrafoListaAdjacencia):
                 self.__dfs_ciclo(verticeAdjacente, rotuloAresta, verticeInicio, verticesAdjacentes, visitados, pai)
 
 
-    '''def bfs(self, V=' '):
+    def bfs(self, V=' '):
 
         arv_bfs = MeuGrafo()
         arv_bfs.adiciona_vertice(V)
@@ -269,7 +236,7 @@ class MeuGrafo(GrafoListaAdjacencia):
         self.bfs_aux_rec(prox, arv_bfs, ordem)
 
         return arv_bfs
-'''
+
 
     def __gerarVerticesAdjacencentes(self):
         '''
@@ -295,71 +262,85 @@ class MeuGrafo(GrafoListaAdjacencia):
         return
 
 
-    def bfs(self, V=''):
-        '''
-        Provê um grafo gerado pela BFS partindo do vértice passado como parâmetro.
-        :param V: O vértice de partida
-        :return: Um objeto do tipo MeuGrafo com o grafo gerado
-        :raises: VerticeInvalidoException se o vértice não existe no grafo
-        '''
-        # O(n+m) -> n - Quantidade de vértices; m- Quantidade de arestas
+    def prim(self,):
+        prim = MeuGrafo()
+        teste=self.ordena()
+        test1=teste[0]
+        proximo =self.arestas[test1].v1.rotulo
+        visitados=[]
+        prim.adiciona_vertice(proximo)
+        while True:
+            if len(self.vertices) == len(prim.vertices):
+                break
+            sobre = self.arestas_sobre_vertice(proximo)
+            menor = inf
+            menor_aresta = ''
+            for a in sobre:
+                if self.arestas[a].peso <= menor :
+                    if not prim.existe_rotulo_vertice(self.oposto(proximo,self.arestas[a]) ):
+                        menor_aresta = self.arestas[a]
+                        menor = self.arestas[a].peso
+            visitados.append(menor_aresta)
+            if menor_aresta.v1.rotulo == proximo:
+                proximo = menor_aresta.v2.rotulo
+            else:
+                proximo = menor_aresta.v1.rotulo
+            if not prim.existe_rotulo_vertice(proximo):
+                prim.adiciona_vertice(proximo)
+                prim.adiciona_aresta(menor_aresta)
+
+        return prim
+    def oposto(self,V,a):
+        if a.v1.rotulo == V:
+            V = a.v2.rotulo
+            return V
+        else:
+            V = a.v1.rotulo
+            return V
+    def Kruskall(self):
+        arvore_kruskall = MeuGrafo()
+        fila_prioridade = self.bucket_sort_kruskall()
+        for v in self.vertices:
+            arvore_kruskall.adiciona_vertice(v.rotulo)
+
+        for i in range(len(fila_prioridade)):
+            for a in fila_prioridade[i]:
+                aresta = self.arestas[a]
+                kruskall_dfs = arvore_kruskall.dfs(aresta.v1.rotulo)
+
+                if kruskall_dfs.existe_rotulo_vertice(aresta.v1.rotulo) and kruskall_dfs.existe_rotulo_vertice(
+                        aresta.v2.rotulo):
+                    pass
+                else:
+                    arvore_kruskall.adiciona_aresta(aresta)
+
+        return arvore_kruskall
 
 
-        arvoreBfs = MeuGrafo([V])
-
-        verticesVisitados = ([V])
-        fila = deque([V])
-
-        verticesAdjacentes = self.__gerarVerticesAdjacencentes()
-
-        if V not in verticesAdjacentes: return arvoreBfs
-
-        while len(fila) != 0:
-            verticeAtual = fila.popleft()
-
-            for (verticeAdjacente, rotuloAresta) in verticesAdjacentes[verticeAtual]:
-                if verticeAdjacente not in verticesVisitados:
-                    if not arvoreBfs.existe_vertice(verticeAdjacente):
-                        arvoreBfs.adiciona_vertice(verticeAdjacente)
-
-                    arvoreBfs.adiciona_aresta(rotuloAresta, verticeAtual, verticeAdjacente)
-
-                    verticesVisitados.append(verticeAdjacente)
-                    fila.append(verticeAdjacente)
-
-        return arvoreBfs
-
-    def ha_ciclo(self):
-        '''
-        Usando DFS, essa função percorre o grafo procurando por um ciclo.
-        :return: uma lista no formato [v1, a1, v2, a2, v3, a3, …, an, v1]
-        (onde vx são vértices e ax são arestas) indicando os vértices e arestas que formam o ciclo.
-        Se não existir nenhum ciclo no grafo, ele retorna 'False'.
-        '''
-       
+    def ordena(self):
+            ordenada=[]
+            menor=inf
+            for a in self.arestas:
+                if self.arestas[a].peso <= menor and not a in ordenada:
+                    menor = self.arestas[a].peso
+            while len(ordenada) < len(self.arestas):
+                for a in self.arestas:
+                    if self.arestas[a].peso== menor:
+                        ordenada.append(a)
+                menor+=1
+            return ordenada
 
 
-    def caminho(self,n):
-        '''
-        Verifica se existe um caminho entre os vértices V1 e V2.
-        :param V1: O vértice de origem
-        :param V2: O vértice de destino
-        :return: Um valor booleano que indica se existe um caminho entre os vértices V1 e V2
-        :raises: VerticeInvalidoException se um dos vértices não existe no grafo
-        '''
-
-
-    def conexo(self):
-        '''
-        Verifica se o grafo é conexo.
-        :return: Um valor booleano que indica se o grafo é conexo
-'''
-
-    def caminho_dois_vertices(self, V1, V2):
-        '''
-        Verifica se existe um caminho entre os vértices V1 e V2.
-        :param V1: O vértice de origem
-        :param V2: O vértice de destino
-        :return: Um valor booleano que indica se existe um caminho entre os vértices V1 e V2
-        :raises: VerticeInvalidoException se um dos vértices não existe no grafo
-        '''
+    def bucket_sort_kruskall(self):
+        lista_pesos = []
+        for a in self.arestas:
+            if not self.arestas[a].peso in lista_pesos:
+                lista_pesos.append(self.arestas[a].peso)
+        lista_pesos.sort()
+        bucket = list()
+        for i in range(len(lista_pesos)):
+            bucket.append([])
+            for a in self.arestas:
+                if self.arestas[a].peso == lista_pesos[i]:
+                    bucket[i].append(a)
+        return bucket
